@@ -149,3 +149,38 @@ async def update_user_status(
     })
 
     return {"message": f"User status updated to '{status}'"}
+
+
+@router.delete("/{user_id}")
+async def delete_user(
+    user_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    """
+    Permanently delete a user account and their chat history (admin only).
+    """
+    if current_user.get("role") != "plant-admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    if user_id == current_user.get("sub"):
+        raise HTTPException(status_code=400, detail="You cannot delete your own account")
+
+    db = get_db()
+    user = await db.users.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    await db.users.delete_one({"_id": ObjectId(user_id)})
+    await db.chats.delete_many({"userId": user_id})
+
+    await db.audit_logs.insert_one({
+        "userId": current_user["sub"],
+        "action": "user_delete",
+        "details": (
+            f"User '{user.get('username')}' deleted by "
+            f"'{current_user.get('username')}'"
+        ),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+
+    return {"message": "User deleted successfully"}

@@ -1,6 +1,16 @@
 import React, { useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Bot, User, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Send,
+  Bot,
+  User,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  Plus,
+  PanelLeftOpen,
+  PanelLeftClose,
+} from "lucide-react";
 
 export default function ChatWindow({
   messages,
@@ -10,6 +20,11 @@ export default function ChatWindow({
   currentRole,
   onSend,
   voiceText,
+  fullscreen = false,
+  title = "New Chat",
+  onNewChat,
+  onToggleHistory,
+  historyOpen,
 }) {
   const [input, setInput] = useState("");
   const scrollAreaRef = useRef(null);
@@ -59,52 +74,67 @@ export default function ChatWindow({
     }
   };
 
-  // If there are no messages, show the welcome hero
-  if (messages.length === 0) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center text-center px-6">
-        <div className="bg-white/90 backdrop-blur-md border border-slate-200 rounded-2xl p-10 shadow-lg max-w-2xl pulse-glow">
-          <div className="flex items-center justify-center mb-6">
-            <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-slate-900 text-amber-400 shadow-xl">
-              <Bot size={42} />
+  return (
+    <div className={`flex flex-col h-full overflow-hidden ${fullscreen ? "" : "bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl shadow-lg"}`}>
+      {/* Title bar */}
+      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-slate-200 bg-white/95 shrink-0">
+        {onToggleHistory && (
+          <button onClick={onToggleHistory} title={historyOpen ? "Hide chat history" : "Show chat history"} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors shrink-0">
+            {historyOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+          </button>
+        )}
+        <Bot size={16} className="text-blue-600 shrink-0" />
+        <p className="text-xs font-bold text-slate-800 truncate flex-1">{title || "New Chat"}</p>
+        {onNewChat && (
+          <button onClick={onNewChat} className="flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:bg-blue-50 rounded-lg px-2.5 py-1.5 transition-colors shrink-0">
+            <Plus size={14} /> New Chat
+          </button>
+        )}
+      </div>
+
+      {/* Message area */}
+      <div ref={scrollAreaRef} onScroll={handleScroll} className="relative flex-1 min-h-0 overflow-y-auto p-4 md:p-6 space-y-4">
+        {messages.length === 0 && (
+          <div className="h-full flex flex-col items-center justify-center text-center px-6">
+            <div className="bg-white/90 backdrop-blur-md border border-slate-200 rounded-2xl p-8 shadow-lg max-w-2xl pulse-glow">
+              <div className="flex items-center justify-center mb-5">
+                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-900 text-amber-400 shadow-xl">
+                  <Bot size={34} />
+                </div>
+              </div>
+              <h2 className="text-xl font-bold text-slate-900 mb-2">Welcome to MRPL AI Workbench</h2>
+              <p className="text-sm text-slate-600 mb-5">
+                {currentRole.icon} You are operating as{" "}
+                <span className="font-semibold text-slate-800">{currentRole.name}</span>
+              </p>
+
+              <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3 text-left mb-5">
+                <p className="text-xs text-slate-600 flex items-start gap-2">
+                  <Sparkles size={14} className="text-blue-500 mt-0.5 shrink-0" />
+                  <span>
+                    Fully offline, air-gapped enterprise assistant. All AI processing happens
+                    locally via the Llama 3 model. Ask questions specific to your{" "}
+                    {currentRole.name.toLowerCase()} duties.
+                  </span>
+                </p>
+              </div>
+
+              {/* Quick prompts */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {currentRole.quickPrompts.slice(0, 4).map((prompt, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => onSend(prompt)}
+                    className="text-left px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 transition-all text-xs text-slate-700 hover:text-slate-900"
+                  >
+                    <span className="text-blue-400 mr-1.5">›</span>
+                    {prompt}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">
-            Welcome to MRPL AI Workbench
-          </h2>
-          <p className="text-slate-600 mb-6">
-            {currentRole.icon} You are operating as{" "}
-            <span className="font-semibold text-slate-800">
-              {currentRole.name}
-            </span>
-          </p>
-
-          <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 text-left">
-            <p className="text-sm text-slate-600 flex items-start gap-2">
-              <Sparkles size={16} className="text-blue-500 mt-0.5 shrink-0" />
-              <span>
-                This is a fully offline, air-gapped enterprise assistant. All
-                AI processing happens locally via the Llama 3 model. Ask
-                questions specific to your {currentRole.name.toLowerCase()}{" "}
-                duties.
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Chat window with messages
-  return (
-    <div className="h-full flex flex-col bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
-      {/* Message area - flex-1 + min-h-0 allows it to shrink and scroll */}
-      <div
-        ref={scrollAreaRef}
-        onScroll={handleScroll}
-        className="relative flex-1 min-h-0 overflow-y-auto p-4 space-y-4"
-      >
+        )}
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -195,7 +225,7 @@ export default function ChatWindow({
       </div>
 
       {/* Input area */}
-      <div className="border-t border-slate-200 bg-slate-50/80">
+      <div className="border-t border-slate-200 bg-white/95 shrink-0">
         {/* Chat input */}
         <div className="p-3">
           <form onSubmit={handleSubmit} className="flex items-end gap-2">

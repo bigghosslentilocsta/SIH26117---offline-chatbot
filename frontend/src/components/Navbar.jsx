@@ -1,21 +1,13 @@
 import React from "react";
-import {
-  Cpu,
-  Trash2,
-  Bell,
-  Factory,
-  Wifi,
-  LogOut,
-} from "lucide-react";
+import { Cpu, Trash2, Bell, Factory, Wifi } from "lucide-react";
+import Avatar from "./Avatar.jsx";
 
 export default function Navbar({
   currentRole,
   user,
-  onLogout,
+  onOpenProfile,
   showTelemetry,
   setShowTelemetry,
-  showSidebar,
-  setShowSidebar,
   messageCount,
   onClearChat,
 }) {
@@ -56,11 +48,14 @@ export default function Navbar({
 
       {/* Right - Actions */}
       <div className="flex items-center gap-2">
-        {/* User Identity */}
+        {/* User Identity — avatar opens the Profile modal */}
         {user && (
-          <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border bg-slate-50 border-slate-200 text-slate-700">
-            {currentRole.icon} {user.fullName || user.username}
-          </span>
+          <Avatar
+            user={user}
+            size={36}
+            onClick={onOpenProfile}
+            className="hidden md:block"
+          />
         )}
 
         <button
@@ -99,15 +94,6 @@ export default function Navbar({
           <Wifi size={14} />
           <span className="hidden sm:inline">Local AI</span>
         </span>
-
-        {/* Logout */}
-        <button
-          onClick={onLogout}
-          title="Sign Out"
-          className="p-2 rounded-lg hover:bg-red-50 text-slate-500 hover:text-red-600 transition-colors"
-        >
-          <LogOut size={18} />
-        </button>
       </div>
     </header>
   );

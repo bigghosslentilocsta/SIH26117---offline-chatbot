@@ -1,18 +1,8 @@
 import {
-  Activity,
-  AlertTriangle,
-  FileSearch,
-  UserCog,
-  FileCheck,
+  LayoutDashboard,
+  MessageSquare,
   Users,
-  BookOpen,
-  Leaf,
-  CheckSquare,
-  Mic,
-  Stethoscope,
-  History,
   ClipboardList,
-  HardDrive,
   Settings,
 } from "lucide-react";
 
@@ -40,30 +30,15 @@ export const roleAccent = {
   },
 };
 
-/* ─── Navigation definitions per role ─── */
-export const roleNavItems = {
-  "control-room": [
-    { id: "unit-status", label: "Unit Status (CDU/VDU/FCCU)", icon: Activity },
-    { id: "active-alarms", label: "Active Alarms", icon: AlertTriangle },
-    { id: "pid-ref", label: "P&ID Quick-Ref", icon: FileSearch },
-    { id: "profile", label: "Profile & Settings", icon: UserCog },
-  ],
-  "safety-officer": [
-    { id: "ptw", label: "Permit-to-Work Evaluator", icon: FileCheck },
-    { id: "officer-dir", label: "Officer Directory", icon: Users },
-    { id: "oisd", label: "OISD Compliance Hub", icon: BookOpen },
-    { id: "env-checklists", label: "Environmental Checklists", icon: Leaf },
-  ],
-  "field-technician": [
-    { id: "sop", label: "SOP Checklists", icon: CheckSquare },
-    { id: "voice-logs", label: "Voice-to-Text Logs", icon: Mic },
-    { id: "diagnostics", label: "Symptom Diagnostics", icon: Stethoscope },
-    { id: "equip-history", label: "Equipment History", icon: History },
-  ],
-  "plant-admin": [
-    { id: "user-mgmt", label: "User Management", icon: Users },
-    { id: "audit-logs", label: "Audit Logs", icon: ClipboardList },
-    { id: "hw-telemetry", label: "Hardware Telemetry", icon: HardDrive },
-    { id: "sys-settings", label: "System Settings", icon: Settings },
-  ],
-};
+/* ─── Primary workbench navigation ───
+ * Clean top-level tabs shown in the main sidebar for every role.
+ * Pages gate privileged endpoints (User Management / Audit Logs)
+ * server-side and surface 403s gracefully.
+ */
+export const SIDEBAR_NAV = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "chatbot", label: "Chatbot", icon: MessageSquare },
+  { id: "user-management", label: "User Management", icon: Users },
+  { id: "audit-logs", label: "Audit Logs", icon: ClipboardList },
+  { id: "settings", label: "Settings", icon: Settings },
+];
