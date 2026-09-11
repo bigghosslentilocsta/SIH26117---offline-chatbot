@@ -1,0 +1,58 @@
+export const ROLES = [
+  {
+    id: "control-room",
+    name: "Control Room Engineer",
+    icon: "🖥️",
+    color: "blue",
+    description: "DCS operations, process control, plant optimization",
+    quickPrompts: [
+      "Analyze current distillation column temperature profile",
+      "Optimize crude unit throughput for maximum yield",
+      "Explain DCS alarm prioritization logic",
+      "Troubleshoot feed pump vibration anomaly",
+    ],
+    systemBadge: "CONTROL ROOM",
+  },
+  {
+    id: "safety-officer",
+    name: "Safety & Health (SHE) Officer",
+    icon: "🛡️",
+    color: "red",
+    description: "Safety, health, environment compliance & incidents",
+    quickPrompts: [
+      "Review confined space entry permit requirements",
+      "What is the emergency shutdown procedure for Unit-3?",
+      "Generate HSE audit checklist for compressors",
+      "Explain LEL monitoring for hydrocarbon areas",
+    ],
+    systemBadge: "HSE DIVISION",
+  },
+  {
+    id: "field-technician",
+    name: "Field Technician",
+    icon: "🔧",
+    color: "amber",
+    description: "Maintenance, troubleshooting, equipment repair",
+    quickPrompts: [
+      "Step-by-step guide to repack a control valve",
+      "Diagnose heat exchanger fouling symptoms",
+      "What is the PM schedule for centrifugal pumps?",
+      "Troubleshoot level transmitter reading error",
+    ],
+    systemBadge: "MAINTENANCE",
+  },
+  {
+    id: "plant-admin",
+    name: "Plant Admin",
+    icon: "📋",
+    color: "emerald",
+    description: "Documentation, reports, scheduling, administration",
+    quickPrompts: [
+      "Draft a monthly production summary report",
+      "Create a shift handover template",
+      "Help me write a purchase requisition for spares",
+      "Generate meeting minutes template for review",
+    ],
+    systemBadge: "ADMINISTRATION",
+  },
+];
